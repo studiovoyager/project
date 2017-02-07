@@ -77,6 +77,8 @@ gulp.task('sass', function(){
 //Watch Task
 gulp.task('watch', ['browserSync','sass'], function(){
 	gulp.watch('app/scss/**/*.scss',['sass']);
+	gulp.watch('app/js/**/*.js',browserSync.reload);
+	gulp.watch('app/*.html',browserSync.reload);
 	//Other Watchers
 });
 

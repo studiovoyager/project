@@ -61,7 +61,12 @@ gulp.task('sass', function(){
 		.pipe(customPlumber('Error running Sass'))
 		//Init sourcemaps
 		.pipe(sourcemaps.init())
-		.pipe(sass())
+		.pipe(sass({
+			includePaths: [
+			'app/bower_components',
+			'node_modules' //if installing sass libraries via npm
+			]
+			}))
 		// ... other plugins
 		.pipe(autoPrefixer({
 			browsers: ['last 2 versions']

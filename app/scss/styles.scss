@@ -1,24 +1,26 @@
 @import "sprites";
 @import "testing";
-
+@import "susy/sass/susy";
 body {
-	background-color: #000;
-	margin: 2em auto;
-	text-align: center;
-	color: #fff;
-	font-size: 1em;
-	text-transform: uppercase;
-	font-family: 'Proxima Nova';
-	min-height: 400em;
-	width: 20em;
+    background-color: #000;
+    margin: 2em auto;
+    text-align: center;
+    color: #fff;
+    font-size: 1em;
+    text-transform: uppercase;
+    font-family: 'Proxima Nova';
+    min-height: 400em;
 }
+
 .testing {
-	//Percentage is sass function
-	display:flex;
-	width: percentage(5/7);
-	height: 100em;
-	color: red;
-	@include retina-sprite($shoes-group);
+    //Percentage is sass function
+    /* width: percentage(5/7); */
+    margin: 0 auto;
+    @include span(2);
+    .graphic {
+        @include retina-sprite($shoes-group);
+    }
 }
+
 //Spritesheet map
 @include sprites($spritesheet-sprites);

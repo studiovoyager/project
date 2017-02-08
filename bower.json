@@ -16,6 +16,8 @@
     "app/bower_components"
   ],
   "dependencies": {
-    "jquery": "1.11.3"
+    "jquery": "1.11.3",
+    "bourbon": "^4.3.1",
+    "susy": "^2.2.12"
   }
 }

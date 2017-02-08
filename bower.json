@@ -1,0 +1,21 @@
+{
+  "name": "project",
+  "description": "my project via npm init",
+  "main": "index.js",
+  "authors": [
+    "studiovoyager <tim@studiovoyager.com.au>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/studiovoyager/project",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "app/bower_components"
+  ],
+  "dependencies": {
+    "jquery": "1.11.3"
+  }
+}

@@ -12,6 +12,8 @@ var gulpIf = require('gulp-if');
 var nunjucksRender = require('gulp-nunjucks-render');
 var data = require('gulp-data');
 var fs = require('fs');
+var del = require('del');
+var runSequence = require('run-sequence');
 
 var myGulpOptions = {
     key: 'value',
@@ -84,7 +86,7 @@ gulp.task('sass', function() {
 });
 
 //Watch Task
-gulp.task('watch', ['browserSync', 'sass'], function() {
+gulp.task('watch', function() {
     gulp.watch('app/scss/**/*.scss', ['sass']);
     gulp.watch('app/js/**/*.js', browserSync.reload);
     gulp.watch('app/*.html', browserSync.reload);
@@ -108,7 +110,7 @@ gulp.task('browserSync', function() {
     })
 });
 
-
+//Nunjucks Templating
 gulp.task('nunjucks', function() {
 
     //nunjucksRender.nunjucks.configure(['app/templates']);
@@ -130,3 +132,29 @@ gulp.task('nunjucks', function() {
         	stream: true
         }))
 });
+
+
+//Clean up task
+gulp.task('clean:dev', function(){
+    return del.sync([
+        'app/css',
+        'app/*.+(html|nunjucks)'
+        ])
+});
+
+//Main Dev(elopment) Task
+gulp.task('default', function(callback){
+    //run in sequence
+    runSequence(
+        'clean:dev',
+        'sprites',
+        ['sass','nunjucks'],
+        ['browserSync','watch'],
+        callback
+    )
+});
+
+
+
+
+

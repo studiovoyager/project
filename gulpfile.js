@@ -14,6 +14,8 @@ var data = require('gulp-data');
 var fs = require('fs');
 var del = require('del');
 var runSequence = require('run-sequence');
+var jshint = require('gulp-jshint');
+var jscs = require('gulp-jscs');
 
 var myGulpOptions = {
     key: 'value',
@@ -85,10 +87,15 @@ gulp.task('sass', function() {
         }))
 });
 
+//Watch JS task -runs lint then browser reload
+gulp.task('watch-js', ['lint-js'], browserSync.reload);
+
+
 //Watch Task
 gulp.task('watch', function() {
     gulp.watch('app/scss/**/*.scss', ['sass']);
-    gulp.watch('app/js/**/*.js', browserSync.reload);
+    //Watch Javascript files and warn us of errors
+    gulp.watch('app/js/**/*.js', ['watch-js']);
     gulp.watch('app/*.html', browserSync.reload);
     gulp.watch([
             'app/templates/**/*',
@@ -133,6 +140,27 @@ gulp.task('nunjucks', function() {
         }))
 });
 
+//Lint JS
+gulp.task('lint:js', function(){
+    return gulp.src('app/js/**/*.js')
+    //Catching errors with customPlumber
+    .pipe(customPlumber('JSHint Error'))
+    .pipe(jshint())
+    .pipe(jshint.reporter('jshint-stylish'))
+    //Catching all JSHint errors
+    .pipe(jshint.reporter('fail', {
+        ignoreWarning : true,
+        ignoreInfo: true
+    }))
+    //adding JSCS to lint:js task
+    .pipe(jscs({
+        //Fix errprs
+        fix: true,
+        configPath: '.jscsrc'
+    }))
+    .pipe(gulp.dest('app/js'))
+});
+
 
 //Clean up task
 gulp.task('clean:dev', function(){
@@ -147,7 +175,7 @@ gulp.task('default', function(callback){
     //run in sequence
     runSequence(
         'clean:dev',
-        'sprites',
+        ['sprites','lint:js'],
         ['sass','nunjucks'],
         ['browserSync','watch'],
         callback

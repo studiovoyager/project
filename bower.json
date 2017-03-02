@@ -1,7 +1,7 @@
 {
   "name": "project",
   "description": "my project via npm init",
-  "main": "index.js",
+  "main": "index.html",
   "authors": [
     "studiovoyager <tim@studiovoyager.com.au>"
   ],

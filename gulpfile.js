@@ -16,7 +16,11 @@ var del = require('del');
 var runSequence = require('run-sequence');
 var jshint = require('gulp-jshint');
 var jscs = require('gulp-jscs');
+var scssLint = require('gulp-scss-lint');
 
+var Server = require('karma').Server;
+
+//Dummy
 var myGulpOptions = {
     key: 'value',
     key2: 'value2'
@@ -87,24 +91,13 @@ gulp.task('sass', function() {
         }))
 });
 
-//Watch JS task -runs lint then browser reload
-gulp.task('watch-js', ['lint-js'], browserSync.reload);
-
-
-//Watch Task
-gulp.task('watch', function() {
-    gulp.watch('app/scss/**/*.scss', ['sass']);
-    //Watch Javascript files and warn us of errors
-    gulp.watch('app/js/**/*.js', ['watch-js']);
-    gulp.watch('app/*.html', browserSync.reload);
-    gulp.watch([
-            'app/templates/**/*',
-            'app/pages/**/*.+(html|nunjucks)',
-            'app/data.json'
-            ], ['nunjucks'] //runs Nunjucks task
-            )
-        //Other Watchers
-});
+//Test
+gulp.task('test', function(done){
+    new Server({
+        configFile: process.cwd() + '/karma.conf.js',
+        singleRun: true
+    }, done).start();
+})
 
 //Browser Sync Task
 gulp.task('browserSync', function() {
@@ -124,7 +117,7 @@ gulp.task('nunjucks', function() {
 
     //Gets .html and .nunjucks files in pages
     return gulp.src('app/pages/**/*.+(html|nunjucks)')
-   		.pipe(customPlumber('Error running Nunjucks'))
+        .pipe(customPlumber('Error running Nunjucks'))
         //Add data to Nunjucks
         .pipe(data(function() {
             return JSON.parse(fs.readFileSync('./app/data.json'))
@@ -136,8 +129,18 @@ gulp.task('nunjucks', function() {
         //Output files in app folder
         .pipe(gulp.dest('app'))
         .pipe(browserSync.reload({
-        	stream: true
+            stream: true
         }))
+});
+
+///Lint SASS
+gulp.task('lint:scss', function(){
+    return gulp.src('app/scss/**/*.scss')
+    //Linting files with SCSSLint
+    .pipe(scssLint({
+        //Pointing to config file
+        config: '.scss-lint.yml'
+    }));
 });
 
 //Lint JS
@@ -158,6 +161,7 @@ gulp.task('lint:js', function(){
         fix: true,
         configPath: '.jscsrc'
     }))
+    // removed JSCS reporter
     .pipe(gulp.dest('app/js'))
 });
 
@@ -170,12 +174,34 @@ gulp.task('clean:dev', function(){
         ])
 });
 
+
+//Watch JS task -runs lint then browser reload
+gulp.task('watch-js', ['lint-js'], browserSync.reload);
+
+
+//Watch Task
+gulp.task('watch', function() {
+    gulp.watch('app/scss/**/*.scss', ['sass', 'lint:scss']);
+    //Watch Javascript files and warn us of errors
+    // gulp.watch('app/js/**/*.js', ['watch-js']);
+    gulp.watch('app/js/**/*.js', browserSync.reload);
+    // included in watch-js task ----- gulp.watch('app/*.html', browserSync.reload);
+    gulp.watch([
+            'app/templates/**/*',
+            'app/pages/**/*.+(html|nunjucks)',
+            'app/data.json'
+            ], ['nunjucks'] //runs Nunjucks task
+            )
+        //Other Watchers
+});
+
 //Main Dev(elopment) Task
 gulp.task('default', function(callback){
     //run in sequence
     runSequence(
         'clean:dev',
-        ['sprites','lint:js'],
+        ['sprites','lint:scss'],
+        // ['sprites','lint:js','lint:scss'],
         ['sass','nunjucks'],
         ['browserSync','watch'],
         callback

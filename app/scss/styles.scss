@@ -8,12 +8,12 @@ body {
     color: #fff;
     font-size: 1em;
     text-transform: uppercase;
-    font-family: 'Proxima Nova';
+    font-family: "Proxima Nova";
     min-height: 400em;
 }
 
 .testing {
-    //Percentage is sass function
+    /*Percentage is sass function */
     /* width: percentage(5/7); */
     margin: 0 auto;
     @include span(2);
@@ -22,5 +22,7 @@ body {
     }
 }
 
-//Spritesheet map
+
+/* Spritesheet map */
+
 @include sprites($spritesheet-sprites);
